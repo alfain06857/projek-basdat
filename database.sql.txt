@@ -1,0 +1,392 @@
+create tablespace sistemjual
+datafile 'D:\Praktikum\Basdat\sistem_jual.dbf'
+size 30m;
+
+create user alfain_06857
+identified by alfain
+default tablespace sistemjual
+quota 30m on sistemjual;
+
+grant all privileges to alfain_06857;
+
+conn alfain_06857/alfain;
+
+Langakah 1
+create table Pegawai
+(
+id_pegawai    INTEGER    not null,
+nama_depan    VARCHAR(15),
+nama_belakang VARCHAR(15),
+tanggal_lahir DATE,
+alamat        VARCHAR(100),
+kode_pos      NUMBER(7),
+no_tlp        NUMBER(12),
+constraint PK_Pegawai primary key (id_pegawai)
+);
+
+Langkah 2
+create table Pelanggan
+(
+id_pelanggan  INTEGER    not null,
+nama_depan    VARCHAR(15),
+nama_belakang VARCHAR(15),
+tanggal_lahir DATE,
+alamat        VARCHAR(100),
+kode_pos      NUMBER(7),
+no_tlp        NUMBER(12),
+constraint PK_Pelanggan primary key (id_pelanggan)
+);
+
+Langkah 3
+create table Kurir
+(
+id_kurir        INTEGER    not null,
+nama_perusahaan VARCHAR(15),
+no_tlp          NUMBER(12),
+constraint PK_Kurir primary key (id_kurir)
+);
+
+4
+create table Pemasok
+(
+id_pemasok      INTEGER    not null,
+nama_perusahaan VARCHAR(15),
+alamat          VARCHAR(100),
+kode_pos        NUMBER(7),
+no_tlp          NUMBER(12),
+constraint PK_Pemasok primary key (id_pemasok)
+);
+
+Langkah 5
+create table Kategori
+(
+id_kategori   INTEGER    not null,
+nama_kategori VARCHAR(15),
+deskripsi     VARCHAR(20),
+constraint PK_Kategori primary key (id_kategori)
+);
+
+Langkah 6 
+create table Produk
+(
+id_produk     INTEGER    not null,
+id_pemasok    INTEGER,   
+id_kategori   INTEGER,    
+nama_produk   VARCHAR(50),
+harga_satuan  NUMBER(9),
+stok_produk   NUMBER(3),
+constraint PK_Produk primary key (id_pemasok),
+constraint FK_KATEGORI FOREIGN KEY (id_kategori)
+REFERENCES kategori(id_kategori)
+);
+
+alter table Produk
+add constraint FK_ID_PEMASOK foreign key (id_pemasok)
+REFERENCES pemasok(id_pemasok);
+
+Langkah 7
+create table Pemesanan
+(
+id_pemesanan  INTEGER    not null,
+id_pelanggan  INTEGER,   
+id_pegawai    INTEGER, 
+id_kurir      INTEGER,  
+tanggal_pemesanan NUMBER(7),
+tanggal_pengiriman NUMBER(7), 
+alamat_pengiriman VARCHAR(5),
+harga_total  NUMBER(4),
+constraint PK_Pemesanan primary key (id_pemesanan)
+);
+
+Langkah 8
+alter table Pemesanan
+add constraint FK_ID_PELANGGAN foreign key (id_pelanggan)
+REFERENCES pelanggan(id_pelanggan);
+alter table Pemesanan
+add constraint FK_ID_PEGAWAi foreign key (id_pegawai)
+REFERENCES pegawai(id_pegawai);
+alter table Pemesanan
+add constraint FK_ID_KURIR foreign key (id_kurir)
+REFERENCES kurir(id_kurir);
+
+Langkah 9
+create table Detail_Pemesanan
+(
+id_produk  INTEGER    not null,
+id_pemesanan  INTEGER,   
+jumlah NUMBER(7),
+diskon NUMBER(7)
+);
+
+Langkah 10
+
+alter table Pemesanan
+add constraint FK_ID_PRODUK foreign key (id_produk)
+REFERENCES produk(id_produk);
+add constraint FK_ID_PEMESANAN foreign key (id_pemesanan)
+REFERENCES pemesanan(id_pemesanan);
+
+create table Detail_Pemesanan
+(
+id_produk     INTEGER    not null,
+id_pemesanan  INTEGER,   
+jumlah NUMBER(7),
+diskon NUMBER(7),
+constraint FK_ID_PEMESANAN foreign key (id_pemesanan)
+REFERENCES pemesanan (id_pemesanan)
+);
+
+=======================================================================
+Modul 2
+
+insert all
+into pegawai values (123456,'Dian', 'Sastro', to_date('25/09/1999','dd/mm/yyyy'), 'Bagelenan', '661256', '089889988')
+into pegawai values (1234567,'Dianti', 'Sastrojoyo', to_date('26/09/1999','dd/mm/yyyy'), 'Bagelenan', '661256', '089889987')
+into pegawai values (12345678,'Aji', 'Bukhori', to_date('19/09/1989','dd/mm/yyyy'), 'Ngemplak', '661256', '089889985')
+into pegawai values (123456789,'Anji', 'Epep', to_date('12/09/1990','dd/mm/yyyy'), 'Ngantru', '661256', '0898899899')
+into pegawai values (1234567891,'Bopak', 'Castello', to_date('25/09/2010','dd/mm/yyyy'), 'Bagelenan', '661256', '089889576')
+select * from dual;
+
+insert all
+into pelanggan values (123456,'Dian', 'Sastro', to_date('25/09/1999','dd/mm/yyyy'), 'Bagelenan', '661256', '089889988')
+into pelanggan values (1234567,'Dianti', 'Sastrojoyo', to_date('26/09/1999','dd/mm/yyyy'), 'Bagelenan', '661256', '089889987')
+into pelanggan values (12345678,'Aji', 'Bukhori', to_date('19/09/1989','dd/mm/yyyy'), 'Ngemplak', '661256', '089889985')
+into pelanggan values (123456789,'Anji', 'Epep', to_date('12/09/1990','dd/mm/yyyy'), 'Ngantru', '661256', '0898899899')
+into pelanggan values (1234567891,'Bopak', 'Castello', to_date('25/09/2010','dd/mm/yyyy'), 'Bagelenan', '661256', '089889576')
+select * from dual;
+
+insert all
+into kurir values (123456,'PT_A', '089889988')
+into kurir values (1234567,'PT_B', '089889984')
+into kurir values (12345678,'PT_C', '089889968')
+into kurir values (123456789,'PT_D', '089889188')
+into kurir values (1234567891,'PT_E', '089889488')
+select * from dual;
+
+insert all
+into pemasok values (123456,'PTA', 'Bagelenan', '661256', '089889988')
+into pemasok values (1234567,'PTB', 'Bagelenan', '661256', '089889987')
+into pemasok values (12345678,'PTC', 'Ngemplak', '661256', '089889985')
+into pemasok values (123456789,'Anji', 'Ngemplak', '661256', '0898899899')
+into pemasok values (1234567891,'Bopak', 'Bagelenan', '661256', '089889576')
+select * from dual;
+
+SAVEPOINT savepoint_id_pelanggan;
+
+
+
+no 4 
+select kode_pos, alamat, no_telp, tanggal_lahir
+from pegawai
+where nama_depan like '%a%' and
+nama_belakang like '%s%' and
+id_pegawai > 10;
+
+======================================================================================
+Modul 3
+
+1. 
+tabel pegawai
+insert all
+into pegawai values (1, 'Dian', 'Sulistyo', to_date('23/09/1998','dd/mm/yyyy'), 'Bagelenan', 661256, 08999999)
+into pegawai values (2, 'Rian', 'Andriandi', to_date('22/10/1997','dd/mm/yyyy'), 'Bagelenan', 661256, 08999990)
+into pegawai values (3, 'Ki', 'Faris', to_date('01/11/2000','dd/mm/yyyy'), 'Bagelenan', 661256, 08999997)
+into pegawai values (4, 'Ahmad', 'Tisna', to_date('09/09/1999','dd/mm/yyyy'), 'Bagelenan', 661256, 08999978)
+into pegawai values (5, 'Asih', 'Jatmiko', to_date('13/09/1998','dd/mm/yyyy'), 'Bagelenan', 661256, 08956999)
+into pegawai values (6, 'Rian', 'Sulistyo', to_date('23/09/1998','dd/mm/yyyy'), 'Surabaya', 661256, 08999889)
+into pegawai values (7, 'Taki', 'Tyo', to_date('23/09/1998','dd/mm/yyyy'), 'Bandung', 661257, 08999779)
+into pegawai values (8, 'Dinda', 'Sulis', to_date('23/09/1998','dd/mm/yyyy'), 'Surabaya', 661253, 08999669)
+into pegawai values (9, 'Didi', 'Kaka', to_date('23/09/1998','dd/mm/yyyy'), 'Perak', 661254, 08999559)
+into pegawai values (10, 'Eve', 'Antoin', to_date('23/09/1998','dd/mm/yyyy'), 'Madura', 661251, 08999449)
+select * from dual;
+
+tabel pelanggan
+insert all
+into pelanggan values (1, 'Rani', 'Sulis', to_date('06/04/1980','dd/mm/yyyy'), 'Srengat', 661255, 08456999)
+into pelanggan values (2, 'Dani', 'Ahmad', to_date('03/08/1970','dd/mm/yyyy'), 'Blitar', 661253, 08456459)
+into pelanggan values (3, 'Ahmad', 'Fikri', to_date('06/04/1999','dd/mm/yyyy'), 'Srengat', 661255, 08456945)
+into pelanggan values (4, 'Dini', 'Sulistyo', to_date('12/04/1990','dd/mm/yyyy'), 'Ngemplak', 661251, 08456234)
+into pelanggan values (5, 'Didin', 'Sutisna', to_date('04/04/1994','dd/mm/yyyy'), 'Srengat', 661255, 08456934)
+into pelanggan values (6, 'Kaka', 'Kiki', to_date('06/04/1980','dd/mm/yyyy'), 'Surabaya', 661256, 08999889)
+into pelanggan values (7, 'Dada', 'Didi', to_date('06/04/1980','dd/mm/yyyy'), 'Bandung', 661257, 08999779)
+into pelanggan values (8, 'Tata', 'Titi', to_date('06/04/1980','dd/mm/yyyy'), 'Surabaya', 661253, 08999669)
+into pelanggan values (9, 'Rara', 'Riri', to_date('06/04/1980','dd/mm/yyyy'), 'Perak', 661254, 08999559)
+into pelanggan values (10, 'Sasa', 'Sisi', to_date('06/04/1980','dd/mm/yyyy'), 'Madura', 661251, 08999449)
+select * from dual;
+
+tabel pemasok
+insert all
+into pemasok values (1, 'MEGASURYA', 'TAMBAK SAWAH', 661257, 0342777777)
+into pemasok values (2, 'UNILEVER', 'RUNGKUT', 661258, 0342777789)
+into pemasok values (3, 'GUDANG GARAM', 'KEDIRI', 661250, 0342777789)
+into pemasok values (4, 'RECHEESE', 'RUNGKUT', 661258, 0342777790)
+into pemasok values (5, 'MEGASURYA MAS', 'TAMBAK SAWAH', 661257, 0342777756)
+into pemasok values (6, 'MEGA', 'TAMBAK SAWAH', 661257, 0342777777)
+into pemasok values (7, 'LEVER', 'RUNGKUT', 661258, 0342777789)
+into pemasok values (8, 'GUDANG', 'KEDIRI', 661250, 0342777789)
+into pemasok values (9, 'CHEESE', 'RUNGKUT', 661258, 0342777790)
+into pemasok values (10, 'SURYA MAS', 'TAMBAK SAWAH', 661257, 0342777756)
+select * from dual;
+
+tabel produk
+insert all
+into produk values (1, 1, 1, 'Sunco', 12000, 250)
+into produk values (2, 2, 2, 'Royco', 1000, 500)
+into produk values (3, 3, 3, 'Surya', 20000, 200)
+into produk values (4, 4, 4, 'Nabati', 1000, 500)
+into produk values (5, 5, 5, 'Medicare', 3000, 500)
+into produk values (6, 6, 6,'Bimoli',12000,150)
+into produk values (7, 7, 7,'Pucuk',1000,100)
+into produk values (8, 8, 8,'Gudang Garam',20000,150)
+into produk values (9, 9, 9,'Chiki',1000,250)
+into produk values (10, 10, 10,'Harum',2000,100)
+select * from dual;
+
+tabel kategori
+insert all
+into kategori values (1, 'Minyak', 'Goreng')
+into kategori values (2, 'Makanan', 'Ringan')
+into kategori values (3, 'Rokok', 'Sedot')
+into kategori values (4, 'Makanan Ringan', 'Jajan')
+into kategori values (5, 'Sabun', 'Mandi')
+into kategori values (6, 'Bumbu', 'Makan')
+into kategori values (7, 'Saos', 'Kecap')
+into kategori values (8, 'Kecap', 'Saos')
+into kategori values (9, 'Buah', 'Kuldi')
+into kategori values (10, 'Makanan Kaleng', 'Bukan Kaleng')
+select * from dual;
+
+
+2. max dan min dalam satu query	
+`	select id_kategori, max(stok_produk) terbanyak, min(stok_produk) terendah
+  	from produk
+  	group by id_kategori;
+
+3. Count, 1 klausa dan 2 operator dalam 1 Query	
+	select id_kategori, count(id_kategori) as banyak_transaksi 
+	from produk 
+	where id_kategori = 3 group by id_kategori;
+
+4. Sum dalam 1 Query
+	select id_kategori, sum(stok_produk) as total_produk 
+	from produk 
+	where id_kategori = 1 group by id_kategori;
+
+5. Average
+	select avg(stok_produk) as rata_rata from produk;
+
+6. subquery dengan Max dan Min
+	select * from produk
+  	WHERE harga_satuan = (SELECT MIN(harga_satuan) FROM produk) ;
+
+	select * from produk
+	WHERE harga_satuan = (SELECT MAX(harga_satuan) FROM produk) ;
+
+7. Count, 1 klausa dan 2 operator
+	select id_kategori,
+	(select count(id_kategori) from produk where produk.id_kategori = kategori.id_kategori)
+	as banyak_transaksi from kategori where id_kategori = 1;
+	
+8. Sum subquery
+	select id_kategori,
+	(select sum(stok_produk) from produk where produk.id_kategori = kategori.id_kategori)
+	as total_produk from kategori where id_kategori = 1;
+
+9. Subquery Avg
+	select id_kategori,
+	(select avg(stok_produk) from produk where produk.id_kategori = kategori.id_kategori)
+	as rata_rata from kategori where id_kategori = 4;
+
+10. Subquery select setelah where
+	select id_kategori,
+	stok_produk from produk
+	where stok_produk in (select stok_produk
+	from produk where harga_satuan > '3000');
+
+================================================================================================
+Modul 4
+
+1. Insert 5 data pada setiap tabel
+insert all
+  2  into produk(id_produk, id_pemasok, id_kategori, nama_produk, harga_satuan, stok_produk) values (6,1,1,'Nabati', '2000', '90')
+  3  into produk(id_produk, id_pemasok, id_kategori, nama_produk, harga_satuan, stok_produk) values (7,2,2,'Good Day', '3000', '40')
+  4  into produk(id_produk, id_pemasok, id_kategori, nama_produk, harga_satuan, stok_produk) values (8,3,3,'Mangga', '3500', '50')
+
+2. Buatlah query laporan dengan jelas sesuai proyek Anda dengan ketentuan sebagai berikut :
+a. Equi Join minimal 2 tabel dengan menerapkan Operator Pembanding dan Klausa
+select a.id_produk, a.nama_produk, b.nama_kategori, a.stok_produk
+from produk a
+join kategori b
+ON a.id_kategori = b.id_kategori
+where rownum <= 10;
+
+b. Left Join minimal 3 tabel dengan menerapkan Klausa dan Subquery
+select a.id_produk, a.nama_produk, b.nama_kategori, c.nama_perusahaan, a.harga_satuan
+from produk a
+left join kategori b
+ON a.id_kategori = b.id_kategori
+left join pemasok c
+ON a.id_pemasok = c.id_pemasok
+where a.harga_satuan in
+(select a.harga_satuan from produk where a.harga_satuan >= 10000)
+group by a.id_produk, a.nama_produk, b.nama_kategori, c.nama_perusahaan, a.harga_satuan;
+
+c. Right join minimal 3 tabel dengan menerapkan aggregate dan operator logika
+select a.id_produk, a.nama_produk, b.nama_kategori, c.nama_perusahaan, a.harga_satuan, MIN(a.stok_produk) as min
+from produk a
+right join kategori b
+ON a.id_kategori = b.id_kategori
+right join pemasok c
+ON a.id_pemasok = c.id_pemasok
+where rownum <= 10 and harga_satuan >= 10000
+group by a.id_produk, a.nama_produk, b.nama_kategori, c.nama_perusahaan, a.harga_satuan;
+
+3. Buatlah view dengan menerapkan DML
+create view identitas as
+select id_pegawai, nama_depan_06860, nama_belakang, alamat
+from pegawai;
+SQL> insert into identitas values (6, 'Yahya', 'Dedi', 'Balikpapan');
+
+4. Buatlah view dari masing-masing soal pada nomor 2.
+View no 2a
+create view list_produk
+as select a.id_produk, a.nama_produk, b.nama_kategori, a.stok_produk
+from produk a
+join kategori b
+ON a.id_kategori = b.id_kategori;
+
+View created.
+
+View no 2b
+create view detail_produk
+as select a.id_produk, a.nama_produk, b.nama_kategori, c.nama_perusahaan, a.harga_satuan
+from produk a
+left join kategori b
+ON a.id_kategori = b.id_kategori
+left join pemasok c
+ON a.id_pemasok = c.id_pemasok
+where a.harga_satuan in
+(select a.harga_satuan from produk where a.harga_satuan >= 10000)
+group by a.id_produk, a.nama_produk, b.nama_kategori, c.nama_perusahaan, a.harga_satuan;
+
+View no 2c
+create view no_2c
+as select a.id_produk, a.nama_produk, b.nama_kategori, c.nama_perusahaan, a.harga_satuan, MIN(a.stok_produk) as min
+from produk a
+right join kategori b
+ON a.id_kategori = b.id_kategori
+right join pemasok c
+ON a.id_pemasok = c.id_pemasok
+where rownum <= 10 and harga_satuan >= 10000
+group by a.id_produk, a.nama_produk, b.nama_kategori, c.nama_perusahaan, a.harga_satuan;
+
+5. Terapkan DML pada View pada nomor 4
+DML pada View no 2a
+SQL> insert into list_produk (id_produk, nama_produk, stok_produk) values (12, 'Aqua', '40');
+
+DML pada View no 2b
+SQL> insert into detail_produk (id_produk, nama_produk, harga_satuan) values (11, 'Hilo', '500');
+
+DML pada View no 2c
+SQL> insert into detaiL_produk (id_produk, nama_produk, harga_satuan) values (13, 'Anlene', '15000');
+
